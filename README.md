@@ -23,12 +23,12 @@ A simple Garage Door Opener Application for the ESP32. Point your phone or brows
 ## 3D
 Small housing and lid for a 50x70 proto board. In this example an ESP32-WROOM-DevKit V1 is used. Any ESP32 should work.
 
-![3D](https://github.com/bmoniey/ESP32GarageDoorOpener/blob/main/ecad/ESP32GarageDoorOpener/ESP32GarageDoorOpener.svg?raw=true)
+![3D](https://github.com/bmoniey/ESP32GarageDoorOpener/blob/main/gallery/housing50x70-rendered.JPG?raw=true)
 
 
 ## ECAD
 
-![ECAD](https://github.com/bmoniey/ESP32GarageDoorOpener/blob/main/gallery/housing50x70-rendered.JPG?raw=true)
+![ECAD](https://github.com/bmoniey/ESP32GarageDoorOpener/blob/main/ecad/ESP32GarageDoorOpener/ESP32GarageDoorOpener.svg?raw=true)
 
 ## PINS
 - OPEN_PIN 32
