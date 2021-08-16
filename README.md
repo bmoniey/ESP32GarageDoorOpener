@@ -2,6 +2,8 @@
 
 A simple Garage Door Opener Application for the ESP32. Point your phone or browser directly at the device. No MQTT.
 
+ ![MainPage](https://github.com/bmoniey/ESP32GarageDoorOpener/blob/main/gallery/MainPage.png?raw=true)
+
 ## Features
 - Key Pad Code Entry
 - Lamp Control
