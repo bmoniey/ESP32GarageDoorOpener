@@ -1,0 +1,41 @@
+html {
+  font-family: Helvetica;
+  display: inline-block;
+  margin: 0px auto;
+  text-align: center;
+  background-color: #6dabb8;
+}
+
+h1{
+  color: #0F3376;
+  font-size: 40px;
+  padding: 2vh;
+}
+
+p{
+  font-size: 1.5rem;
+}
+
+a{
+  font-size: 1.5rem;
+}
+
+input {
+  background-color: #f5f3ef;
+  font-size: 30px;
+  text-align: center;
+  margin: 5px;
+}
+
+button {
+  display: inline-block;
+  background-color: #918f8b;
+  border-color: #201704;
+  border-radius: 12px;
+  color: rgb(212, 42, 156);
+  padding: 5px 30px;
+  text-decoration: none;
+  font-size: 30px;
+  margin: 10px;
+  cursor: pointer;
+}
