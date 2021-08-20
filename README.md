@@ -12,11 +12,6 @@ A simple Garage Door Opener Application for the ESP32. Point your phone or brows
 - Admin Page
 - Info Page
 
-## Notes:
-- Access Point default IP address: 192.168.4.1
-- mDNS default url: http://garage-test.local
-- mDNS will not work on Android Phones.
-
 ## Build Evironment
 - Platform IO
 
@@ -43,6 +38,15 @@ Small housing and lid for a 50x70 proto board. In this example an ESP32-WROOM-De
 - Flash binary using platformio->upload
 - Build File System Image platformio->Build File System Image
 - Upload FIle System Image platformio->Upload File System Image
+
+## Default Settings and links:
+- Device Name:garage-test
+- Access Point default IP address: 192.168.4.1
+- mDNS default url: http://garage-test.local
+- Admin page: http://garage-test/admin
+- OTA: http://garage-test/update
+- Reset Wifi Setting: http://garage-test/reset
+- Door Open Code: 161974
 
 ## Version
 
