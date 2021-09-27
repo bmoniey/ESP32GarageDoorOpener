@@ -26,6 +26,8 @@ Garge Door Opener
 #define BUTTON_DOWN_TIME_MS 2000UL
 #define WIFI_UPDATE_PERIOD_MS 10000UL
 #define DAILY_RESET_PERIOD_MS (60UL*60UL*24UL*1000UL)
+#define MAX_TIME_IN_PORTAL 300000L //5minutes in the portal is long enough
+#define MAX_TIME_IN_WIFI_DISCONNECTED 1200000L //20 minutes
 
 
 /**
@@ -48,9 +50,11 @@ enum GarageState_t{g_init,g_idle,g_open_down,g_lamp_down} garageState;
 
 bool garageStateOnEntry = true;
 unsigned long garageStateMSTimer = 0UL;
-uint8_t  open_command  = 0; //set by the server, cleared by the loop garage
+uint8_t  open_command  = 0;//set by the server, cleared by the loop garage
 uint8_t  lamp_command = 0;//set by the server, cleared by the loop_garage
 unsigned long  loop_wifi_timer = 0UL;
+unsigned long  portal_timer = MAX_TIME_IN_PORTAL;
+unsigned long  wifi_disconnected_timer = MAX_TIME_IN_WIFI_DISCONNECTED;
 
 /*
 *Function Prototypes
@@ -95,6 +99,9 @@ void setup_ota(){
   AsyncElegantOTA.begin(&server,settings.http_username,settings.http_password);    // Start ElegantOTA
 }
 void setup_wifi() {
+  portal_timer = MAX_TIME_IN_PORTAL + millis();
+  wifi_disconnected_timer = MAX_TIME_IN_WIFI_DISCONNECTED + millis();
+
   // WiFi.mode(WiFi_STA); // it is a good practice to make sure your code sets wifi mode how you want it.
   WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
 
@@ -121,6 +128,7 @@ void setup_wifi() {
     else {
         //if you get here you have connected to the WiFi    
         Serial.println("connected...yeey :)");
+        wifi_disconnected_timer = MAX_TIME_IN_WIFI_DISCONNECTED + millis();
     }
 
   //setup mdns
@@ -181,8 +189,13 @@ void loop_wifi_rssi(){
         }
         //  lbg.drawValue(100+rssi, 100);
         Serial.printf("wifi signal report:%ddb\n",rssi);
+        wifi_disconnected_timer = MAX_TIME_IN_WIFI_DISCONNECTED + millis();
       }else{
         Serial.printf("wifi not connected!\n");
+        if( wifi_disconnected_timer < millis()){
+          Serial.printf("wifi disconnected timer expired!\n Resetting device!.\n");
+          ESP.restart();
+        }
       }
   }
 }
@@ -192,6 +205,11 @@ void loop_wifi(){
     wm.process();
     if(wm.getConfigPortalActive()){
       used_portal = true;
+
+      if(portal_timer < millis()){
+          Serial.println(F("Device in portal too long...\nReseting Device!\n"));
+          ESP.restart();
+      }
     }
     else{
       if(!server_init){
