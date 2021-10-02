@@ -131,7 +131,7 @@ void setup_server(){
 
   // reset the esp32
   server.on("/reset", HTTP_GET, [](AsyncWebServerRequest *request){
-    Serial.println("Recieved /reset request");
+    Serial.println("Received /reset request");
     
     send_json_message(request,"message","resetting in 2 seconds...");
 
@@ -142,7 +142,7 @@ void setup_server(){
 
     // reset the esp32
   server.on("/reset_wifi", HTTP_GET, [](AsyncWebServerRequest *request){
-    Serial.println("Recieved /reset_wifi request");
+    Serial.println("Received /reset_wifi request");
     
     send_json_message(request,"message","resetting wifi credentials in 2 seconds...look for GarageAP at 192.168.1.4");
 
@@ -153,7 +153,7 @@ void setup_server(){
 
    // process the code
   server.on("/code", HTTP_GET, [](AsyncWebServerRequest *request){
-    Serial.println("Recieved /code request");
+    Serial.println("Received /code request");
     String code;
         if (request->hasParam("code")) {
             code = request->getParam("code")->value();
@@ -173,7 +173,7 @@ void setup_server(){
 
   // process the lamp command
   server.on("/lamp", HTTP_GET, [](AsyncWebServerRequest *request){
-    Serial.println("Recieved /lamp request");
+    Serial.println("Received /lamp request");
     String lamp;
         if (request->hasParam("lamp")) {
             lamp = request->getParam("lamp")->value();
@@ -237,7 +237,7 @@ void setup_server(){
 
     // save settings
   server.on("/save", HTTP_GET, [](AsyncWebServerRequest *request){
-        Serial.println("Recieved /save request");
+        Serial.println("Received /save request");
         if(!request->authenticate(settings.http_username, settings.http_password))
             return request->requestAuthentication();
         Serial.println("/default Authentication Success!");
