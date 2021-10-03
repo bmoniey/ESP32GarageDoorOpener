@@ -94,6 +94,10 @@ String admin_processor(const String& var){
   S+="<br>\n";
   S+=make_form_entry("admin","garage access code", "code",settings.code);
   S+="<br>\n";
+  S+=make_form_entry("ap_name","access point name", "ap_name",settings.ap_name);
+  S+="<br>\n";
+  S+=make_form_entry("ap_password","access point password", "ap_name",settings.ap_password);
+  S+="<br>\n";
   S+= make_action_button(String("reset"),String("Reset"));
   S+="<br>\n";
   S+= make_action_button(String("default"),String("Restore Default Settings"));

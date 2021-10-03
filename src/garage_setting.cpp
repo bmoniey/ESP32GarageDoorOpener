@@ -13,6 +13,8 @@ void default_settings(GarageSettings_t * s){
     strcpy(s->http_password,"password");
     strcpy(s->code,"161974");
     strcpy(s->dev_name,"garage-test");
+    strcpy(s->ap_name,"GarageAP");
+    strcpy(s->ap_password,"!tomlov123!");
 }
 
 void show_settings(GarageSettings_t * s){
@@ -25,7 +27,10 @@ void show_settings(GarageSettings_t * s){
     Serial.println(s->code);
     Serial.print("dev_name:");
     Serial.println(s->dev_name);
-    
+    Serial.print("ap_name:");
+    Serial.println(s->ap_name);
+    Serial.print("ap_password:");
+    Serial.println(s->ap_password);
 }
 
 void save_settings(GarageSettings_t * s){
@@ -35,6 +40,8 @@ void save_settings(GarageSettings_t * s){
   json_settings["http_password"] = s->http_password;
   json_settings["code"] = s->code;
   json_settings["dev_name"] = s->dev_name;
+  json_settings["ap_name"] = s->ap_name;
+  json_settings["ap_password"] = s->ap_password;
 
   LITTLEFS.remove("/settings.json");
   File fd = LITTLEFS.open("/settings.json",FILE_WRITE);
@@ -47,10 +54,11 @@ void save_settings(GarageSettings_t * s){
 
 void load_settings(GarageSettings_t * s){
     Serial.println(F("loading settings\n"));
+
+    default_settings(&settings);//make sure something good is in there
     File fd = LITTLEFS.open("/settings.json",FILE_READ);
     if(!fd){
-      Serial.println("Failed to open settings.json\n");
-      default_settings(&settings);
+      Serial.println("Failed to open settings.json\n");  
       save_settings(&settings);
       show_settings(&settings);
       return;
@@ -84,6 +92,14 @@ void load_settings(GarageSettings_t * s){
 
     if(json_settings["dev_name"]){
       strcpy(s->dev_name,json_settings["dev_name"]);
+    }
+
+    if(json_settings["ap_name"]){
+      strcpy(s->ap_name,json_settings["ap_name"]);
+    }
+
+    if(json_settings["ap_password"]){
+      strcpy(s->ap_password,json_settings["ap_password"]);
     }
 }
 

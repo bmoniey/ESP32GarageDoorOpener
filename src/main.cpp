@@ -105,7 +105,7 @@ void setup_wifi() {
 
     wm =  new AsyncWiFiManager(&server,&dns);
     //much simpler if this blocks!!!
-    wm->autoConnect("GarageAP","!tomlov123!"); // password protected ap
+    wm->autoConnect(settings.ap_name,settings.ap_password); // password protected ap
     setup_server(); //this reset all the pages
     server.begin();
 
