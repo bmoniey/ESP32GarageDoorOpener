@@ -1,18 +1,20 @@
 #include "garage_server.h"
-#include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
+#include <ESPAsyncWiFiManager.h>
 #include <ESPAsyncWebServer.h>
 #include <LITTLEFS.h>
 #include "version.h"
 #include "garage_settings.h"
 
 AsyncWebServer server(80);
+DNSServer dns;
+AsyncWiFiManager * wm;
 
 const char* http_username = "admin";
 const char* http_password = "password";
 
 extern Info_t info;
 extern GarageSettings_t settings;
-extern WiFiManager wm;
+
 extern void update_info();
 extern void send_lamp_command();
 extern void send_open_command();
@@ -111,8 +113,9 @@ void send_json_message(AsyncWebServerRequest *request,String field1,String value
 
 void setup_server(){
   Serial.println("Setting up web server...");
+
   
-  //wm.server->close();
+  //wm->autoConnect("AutoConnectAP");
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     //readFile(LITTLEFS,"/index.html");
@@ -135,7 +138,7 @@ void setup_server(){
     
     send_json_message(request,"message","resetting in 2 seconds...");
 
-    //wm.resetSettings();
+    wm->resetSettings();
     delay(2000);
     ESP.restart();
   });
@@ -143,10 +146,9 @@ void setup_server(){
     // reset the esp32
   server.on("/reset_wifi", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("Received /reset_wifi request");
-    
-    send_json_message(request,"message","resetting wifi credentials in 2 seconds...look for GarageAP at 192.168.1.4");
+    Serial.println("Resetting wifi credentials in 2 seconds...look for GarageAP at 192.168.1.4");
 
-    wm.resetSettings();
+    wm->resetSettings();
     delay(2000);
     ESP.restart();
   });
