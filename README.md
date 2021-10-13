@@ -42,6 +42,8 @@ Small housing and lid for a 50x70 proto board. In this example an ESP32-WROOM-De
 ## Default Settings and links:
 - Device Name:garage-test
 - Access Point default IP address: 192.168.4.1
+- Default Access Point Id:GarageAP
+- Default Access Point Password:!tomlov123!
 - mDNS default url: http://garage-test.local
 - Admin page: http://garage-test/admin
 - OTA: http://garage-test/update
@@ -51,3 +53,7 @@ Small housing and lid for a 50x70 proto board. In this example an ESP32-WROOM-De
 ## Version
 
 1.1.264 The intial version released to GitHub
+
+##branch async
+
+1.3.367 Migrated to https://github.com/alanswx/ESPAsyncWiFiManager.git. Now there is only one sever and no resets needed to recover from being in AP mode!

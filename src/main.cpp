@@ -10,7 +10,7 @@ Garge Door Opener
 
 */
 #include <Arduino.h>
-#include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
+#include <ESPAsyncWiFiManager.h>
 #include <ESPAsyncWebServer.h>
 #include <LITTLEFS.h>
 #include <ESPmDNS.h>
@@ -26,7 +26,7 @@ Garge Door Opener
 #define BUTTON_DOWN_TIME_MS 2000UL
 #define WIFI_UPDATE_PERIOD_MS 10000UL
 #define DAILY_RESET_PERIOD_MS (60UL*60UL*24UL*1000UL)
-#define MAX_TIME_IN_PORTAL 300000L //5minutes in the portal is long enough
+
 #define MAX_TIME_IN_WIFI_DISCONNECTED 1200000L //20 minutes
 
 
@@ -34,10 +34,11 @@ Garge Door Opener
  * Global Variables
  */
 extern AsyncWebServer server;
+extern AsyncWiFiManager * wm; //do not access until setup server is called.
 extern GarageSettings_t settings;
+extern DNSServer dns;
+extern WiFiClass WiFi;
 
-
-WiFiManager wm;
 Info_t info = {
   .up_hours = 0,
   .up_min   = 0,
@@ -53,7 +54,7 @@ unsigned long garageStateMSTimer = 0UL;
 uint8_t  open_command  = 0;//set by the server, cleared by the loop garage
 uint8_t  lamp_command = 0;//set by the server, cleared by the loop_garage
 unsigned long  loop_wifi_timer = 0UL;
-unsigned long  portal_timer = MAX_TIME_IN_PORTAL;
+
 unsigned long  wifi_disconnected_timer = MAX_TIME_IN_WIFI_DISCONNECTED;
 
 /*
@@ -79,13 +80,12 @@ void setup(){
     setup_fs();
     setup_settings();
     setup_pins();
+    //setup_server();
     setup_wifi();
     setup_ota();
-    setup_server();
+    
 }
 
-bool used_portal = false;
-bool server_init = false;
 void loop() {
     // put your main code here, to run repeatedly:
     loop_wifi();
@@ -93,42 +93,35 @@ void loop() {
     //see if its time to do the daily reset
     loop_reset_every_day();
 }
+
 void setup_ota(){
   Serial.println("Setting up OTA");
   
   AsyncElegantOTA.begin(&server,settings.http_username,settings.http_password);    // Start ElegantOTA
 }
 void setup_wifi() {
-  portal_timer = MAX_TIME_IN_PORTAL + millis();
+
   wifi_disconnected_timer = MAX_TIME_IN_WIFI_DISCONNECTED + millis();
 
-  // WiFi.mode(WiFi_STA); // it is a good practice to make sure your code sets wifi mode how you want it.
-  WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
+    wm =  new AsyncWiFiManager(&server,&dns);
+    //much simpler if this blocks!!!
+    wm->autoConnect(settings.ap_name,settings.ap_password); // password protected ap
+    setup_server(); //this reset all the pages
+    server.begin();
 
-    //reset settings - wipe credentials for testing
-    //wm.resetSettings();
-
-    // Automatically connect using saved credentials,
-    // if connection fails, it starts an access point with the specified name ( "AutoConnectAP"),
-    // if empty will auto generate SSID, if password is blank it will be anonymous AP (wm.autoConnect())
-    // then goes into a blocking loop awaiting configuration and will return success result
-
-    bool res;
-    
-    wm.setConfigPortalBlocking(false);
-
-    // res = wm.autoConnect(); // auto generated AP name from chipid
-    // res = wm.autoConnect("AutoConnectAP"); // anonymous ap
-    res = wm.autoConnect("GarageAP","!tomlov123!"); // password protected ap
-
-    if(!res) {
+    if(WiFi.status() != WL_CONNECTED) {
         Serial.println("Failed to connect");
         // ESP.restart();
     } 
     else {
         //if you get here you have connected to the WiFi    
         Serial.println("connected...yeey :)");
-        wifi_disconnected_timer = MAX_TIME_IN_WIFI_DISCONNECTED + millis();
+        Serial.println("IP Addr:" + WiFi.localIP().toString());
+        String S = String("RSSI:" );
+        S+= WiFi.RSSI();
+        S+= "dB";
+        Serial.println(S);
+        wifi_disconnected_timer = MAX_TIME_IN_WIFI_DISCONNECTED + millis();   
     }
 
   //setup mdns
@@ -202,31 +195,7 @@ void loop_wifi_rssi(){
 
 
 void loop_wifi(){
-    wm.process();
-    if(wm.getConfigPortalActive()){
-      used_portal = true;
-
-      if(portal_timer < millis()){
-          Serial.println(F("Device in portal too long...\nReseting Device!\n"));
-          ESP.restart();
-      }
-    }
-    else{
-      if(!server_init){
-        if(used_portal){
-          Serial.println(F("Used a portal Reseting Device."));
-          ESP.restart();
-          server_init=true;
-        }else{
-          Serial.println(F("Starting Application"));
-          server.begin();
-          server_init=true;
-       }
-      }else{
-        //periodically report the wifi signal strength
-        loop_wifi_rssi();
-      }
-    }
+  loop_wifi_rssi();
 }
 
 void loop_garage(){

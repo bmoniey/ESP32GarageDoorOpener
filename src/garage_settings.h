@@ -8,6 +8,8 @@ typedef struct GarageSettings{
     char http_password[DEFAULT_STRING_LEN];
     char code[DEFAULT_STRING_LEN];
     char dev_name[DEFAULT_STRING_LEN];
+    char ap_name[DEFAULT_STRING_LEN];
+    char ap_password[DEFAULT_STRING_LEN];
 }GarageSettings_t;
 
 void show_settings(GarageSettings_t * s);
