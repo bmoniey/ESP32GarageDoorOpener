@@ -52,7 +52,7 @@ Small housing and lid for a 50x70 proto board. In this example an ESP32-WROOM-De
 
 ## Version
 
-1.4.381
+1.4.381 async webserver and async wifi manager on main branch now. Also added configurable access point name and password.
 
 ## main merge #2 from async branch 
 
