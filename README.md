@@ -52,8 +52,14 @@ Small housing and lid for a 50x70 proto board. In this example an ESP32-WROOM-De
 
 ## Version
 
-1.1.264 The intial version released to GitHub
+1.4.381
 
-##branch async
+## main merge #2 from async branch 
 
 1.3.367 Migrated to https://github.com/alanswx/ESPAsyncWiFiManager.git. Now there is only one sever and no resets needed to recover from being in AP mode!
+
+## branch async - goal to introduce ESPAsyncWiFiManager
+
+1.2.302 Has wifi monitoring
+
+1.1.264 The intial version released to GitHub
